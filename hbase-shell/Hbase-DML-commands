@@ -1,0 +1,262 @@
+Data manipulation commands- HBase
+---------------------------------------
+Refernce:
+https://www.tutorialspoint.com/hbase/hbase_create_data.htm
+https://www.tutorialspoint.com/hbase/hbase_read_data.htm
+https://www.tutorialspoint.com/hbase/hbase_delete_data.htm
+
+count 'student', CACHE=> 1000
+count 'student', INTERVAL=> 10000
+count 'student', INTERVAL=> 10, CACHE=> 1000
+
+
+Create Data:
+put ’<table name>’,’row1’,’<colfamily:colname>’,’<value>’
+
+hbase(main):040:0> put 'emp','1','personal:name','raju'
+0 row(s) in 0.2460 seconds
+
+hbase(main):041:0> put 'emp','1','personal:city','hyderabad'
+0 row(s) in 0.0200 seconds
+
+hbase(main):042:0> put 'emp','1','professional:designation','manager'
+0 row(s) in 0.0320 seconds
+
+hbase(main):043:0> put 'emp','1','professional:salary','50000'
+0 row(s) in 0.0130 seconds
+
+
+-------------------------------------------------------------------------------------------
+hbase(main):045:0> put 'emp','1','salary','50000'
+
+ERROR: Unknown column family! Valid column names: personal:*, professional:*
+
+Put a cell 'value' at specified table/row/column and optionally
+timestamp coordinates.  To put a cell value into table 'ns1:t1' or 't1'
+at row 'r1' under column 'c1' marked with the time 'ts1', do:
+
+  hbase> put 'ns1:t1', 'r1', 'c1', 'value'
+  hbase> put 't1', 'r1', 'c1', 'value'
+  hbase> put 't1', 'r1', 'c1', 'value', ts1
+  hbase> put 't1', 'r1', 'c1', 'value', {ATTRIBUTES=>{'mykey'=>'myvalue'}}
+  hbase> put 't1', 'r1', 'c1', 'value', ts1, {ATTRIBUTES=>{'mykey'=>'myvalue'}}
+  hbase> put 't1', 'r1', 'c1', 'value', ts1, {VISIBILITY=>'PRIVATE|SECRET'}
+
+The same commands also can be run on a table reference. Suppose you had a reference
+t to table 't1', the corresponding command would be:
+
+  hbase> t.put 'r1', 'c1', 'value', ts1, {ATTRIBUTES=>{'mykey'=>'myvalue'}}
+  
+--------------------------------------------------------------------------------------------
+
+hbase(main):044:0> scan 'emp'
+ROW                                         COLUMN+CELL                                                                                                                 
+ 1                                          column=personal:city, timestamp=1582191741772, value=hyderabad                                                              
+ 1                                          column=personal:name, timestamp=1582191696163, value=raju                                                                   
+ 1                                          column=professional:designation, timestamp=1582191771270, value=manager                                                     
+ 1                                          column=professional:salary, timestamp=1582191799063, value=50000
+ 
+1 row(s) in 0.0670 seconds
+
+
+put 'emp','2','personal:name','ravi'
+put 'emp','2','personal:city','chennai'
+put 'emp','2','professional:designation','engineer'
+put 'emp','2','professional:salary','60000'
+
+
+put 'emp','3','personal:name','shyam'
+put 'emp','3','personal:city','kolkata'
+put 'emp','3','professional:designation','artist'
+put 'emp','3','professional:salary','75000'
+
+hbase(main):055:0> scan 'emp'
+ROW                                         COLUMN+CELL                                                                                                                 
+ 1                                          column=personal:city, timestamp=1582191741772, value=hyderabad                                                              
+ 1                                          column=personal:name, timestamp=1582191696163, value=raju                                                                   
+ 1                                          column=professional:designation, timestamp=1582191771270, value=manager                                                     
+ 1                                          column=professional:salary, timestamp=1582191799063, value=50000                                                            
+ 2                                          column=personal:city, timestamp=1582192299168, value=chennai                                                                
+ 2                                          column=personal:name, timestamp=1582192299107, value=ravi                                                                   
+ 2                                          column=professional:designation, timestamp=1582192299292, value=engineer                                                    
+ 2                                          column=professional:salary, timestamp=1582192300981, value=60000                                                            
+ 3                                          column=personal:city, timestamp=1582192311486, value=kolkata                                                                
+ 3                                          column=personal:name, timestamp=1582192311436, value=shyam                                                                  
+ 3                                          column=professional:designation, timestamp=1582192311586, value=artist                                                      
+ 3                                          column=professional:salary, timestamp=1582192313217, value=75000       
+3 row(s) in 0.0450 seconds
+
+
+
+hbase(main):056:0> get 'emp', '1'
+COLUMN                                      CELL                                                                                                                        
+ personal:city                              timestamp=1582191741772, value=hyderabad                                                                                    
+ personal:name                              timestamp=1582191696163, value=raju                                                                                         
+ professional:designation                   timestamp=1582191771270, value=manager                                                                                      
+ professional:salary                        timestamp=1582191799063, value=50000                                                                                        
+4 row(s) in 0.0290 seconds
+
+
+------------------------------------------------------------------------
+hbase(main):057:0> get
+
+ERROR: wrong number of arguments (0 for 2)
+
+Get row or cell contents; pass table name, row, and optionally
+a dictionary of column(s), timestamp, timerange and versions. Examples:
+
+  hbase> get 'ns1:t1', 'r1'
+  hbase> get 't1', 'r1'
+  hbase> get 't1', 'r1', {TIMERANGE => [ts1, ts2]}
+  hbase> get 't1', 'r1', {COLUMN => 'c1'}
+  hbase> get 't1', 'r1', {COLUMN => ['c1', 'c2', 'c3']}
+  hbase> get 't1', 'r1', {COLUMN => 'c1', TIMESTAMP => ts1}
+  hbase> get 't1', 'r1', {COLUMN => 'c1', TIMERANGE => [ts1, ts2], VERSIONS => 4}
+  hbase> get 't1', 'r1', {COLUMN => 'c1', TIMESTAMP => ts1, VERSIONS => 4}
+  hbase> get 't1', 'r1', {FILTER => "ValueFilter(=, 'binary:abc')"}
+  hbase> get 't1', 'r1', 'c1'
+  hbase> get 't1', 'r1', 'c1', 'c2'
+  hbase> get 't1', 'r1', ['c1', 'c2']
+  hbase> get 't1', 'r1', {COLUMN => 'c1', ATTRIBUTES => {'mykey'=>'myvalue'}}
+  hbase> get 't1', 'r1', {COLUMN => 'c1', AUTHORIZATIONS => ['PRIVATE','SECRET']}
+  hbase> get 't1', 'r1', {CONSISTENCY => 'TIMELINE'}
+  hbase> get 't1', 'r1', {CONSISTENCY => 'TIMELINE', REGION_REPLICA_ID => 1}
+
+  Besides the default 'toStringBinary' format, 'get' also supports custom formatting by
+column.  A user can define a FORMATTER by adding it to the column name in the get
+specification.  The FORMATTER can be stipulated: 
+
+ 1. either as a org.apache.hadoop.hbase.util.Bytes method name (e.g, toInt, toString)
+ 2. or as a custom class followed by method name: e.g. 'c(MyFormatterClass).format'.
+
+Example formatting cf:qualifier1 and cf:qualifier2 both as Integers: 
+  hbase> get 't1', 'r1' {COLUMN => ['cf:qualifier1:toInt',
+    'cf:qualifier2:c(org.apache.hadoop.hbase.util.Bytes).toInt'] } 
+
+Note that you can specify a FORMATTER by column only (cf:qualifier).  You cannot specify
+a FORMATTER for all columns of a column family.
+    
+The same commands also can be run on a reference to a table (obtained via get_table or
+create_table). Suppose you had a reference t to table 't1', the corresponding commands
+would be:
+
+  hbase> t.get 'r1'
+  hbase> t.get 'r1', {TIMERANGE => [ts1, ts2]}
+  hbase> t.get 'r1', {COLUMN => 'c1'}
+  hbase> t.get 'r1', {COLUMN => ['c1', 'c2', 'c3']}
+  hbase> t.get 'r1', {COLUMN => 'c1', TIMESTAMP => ts1}
+  hbase> t.get 'r1', {COLUMN => 'c1', TIMERANGE => [ts1, ts2], VERSIONS => 4}
+  hbase> t.get 'r1', {COLUMN => 'c1', TIMESTAMP => ts1, VERSIONS => 4}
+  hbase> t.get 'r1', {FILTER => "ValueFilter(=, 'binary:abc')"}
+  hbase> t.get 'r1', 'c1'
+  hbase> t.get 'r1', 'c1', 'c2'
+  hbase> t.get 'r1', ['c1', 'c2']
+  hbase> t.get 'r1', {CONSISTENCY => 'TIMELINE'}
+  hbase> t.get 'r1', {CONSISTENCY => 'TIMELINE', REGION_REPLICA_ID => 1}
+
+----------------------------------------------------------------------------------------------------------------
+  
+  hbase(main):058:0> scan
+
+ERROR: wrong number of arguments (0 for 1)
+
+Scan a table; pass table name and optionally a dictionary of scanner
+specifications.  Scanner specifications may include one or more of:
+TIMERANGE, FILTER, LIMIT, STARTROW, STOPROW, ROWPREFIXFILTER, TIMESTAMP,
+MAXLENGTH or COLUMNS, CACHE or RAW, VERSIONS, ALL_METRICS or METRICS
+
+If no columns are specified, all columns will be scanned.
+To scan all members of a column family, leave the qualifier empty as in
+'col_family'.
+
+The filter can be specified in two ways:
+1. Using a filterString - more information on this is available in the
+Filter Language document attached to the HBASE-4176 JIRA
+2. Using the entire package name of the filter.
+
+If you wish to see metrics regarding the execution of the scan, the
+ALL_METRICS boolean should be set to true. Alternatively, if you would
+prefer to see only a subset of the metrics, the METRICS array can be 
+defined to include the names of only the metrics you care about.
+
+Some examples:
+
+  hbase> scan 'hbase:meta'
+  hbase> scan 'hbase:meta', {COLUMNS => 'info:regioninfo'}
+  hbase> scan 'ns1:t1', {COLUMNS => ['c1', 'c2'], LIMIT => 10, STARTROW => 'xyz'}
+  hbase> scan 't1', {COLUMNS => ['c1', 'c2'], LIMIT => 10, STARTROW => 'xyz'}
+  hbase> scan 't1', {COLUMNS => 'c1', TIMERANGE => [1303668804, 1303668904]}
+  hbase> scan 't1', {REVERSED => true}
+  hbase> scan 't1', {ALL_METRICS => true}
+  hbase> scan 't1', {METRICS => ['RPC_RETRIES', 'ROWS_FILTERED']}
+  hbase> scan 't1', {ROWPREFIXFILTER => 'row2', FILTER => "
+    (QualifierFilter (>=, 'binary:xyz')) AND (TimestampsFilter ( 123, 456))"}
+  hbase> scan 't1', {FILTER =>
+    org.apache.hadoop.hbase.filter.ColumnPaginationFilter.new(1, 0)}
+  hbase> scan 't1', {CONSISTENCY => 'TIMELINE'}
+For setting the Operation Attributes 
+  hbase> scan 't1', { COLUMNS => ['c1', 'c2'], ATTRIBUTES => {'mykey' => 'myvalue'}}
+  hbase> scan 't1', { COLUMNS => ['c1', 'c2'], AUTHORIZATIONS => ['PRIVATE','SECRET']}
+For experts, there is an additional option -- CACHE_BLOCKS -- which
+switches block caching for the scanner on (true) or off (false).  By
+default it is enabled.  Examples:
+
+  hbase> scan 't1', {COLUMNS => ['c1', 'c2'], CACHE_BLOCKS => false}
+
+Also for experts, there is an advanced option -- RAW -- which instructs the
+scanner to return all cells (including delete markers and uncollected deleted
+cells). This option cannot be combined with requesting specific COLUMNS.
+Disabled by default.  Example:
+
+  hbase> scan 't1', {RAW => true, VERSIONS => 10}
+
+Besides the default 'toStringBinary' format, 'scan' supports custom formatting
+by column.  A user can define a FORMATTER by adding it to the column name in
+the scan specification.  The FORMATTER can be stipulated: 
+
+ 1. either as a org.apache.hadoop.hbase.util.Bytes method name (e.g, toInt, toString)
+ 2. or as a custom class followed by method name: e.g. 'c(MyFormatterClass).format'.
+
+Example formatting cf:qualifier1 and cf:qualifier2 both as Integers: 
+  hbase> scan 't1', {COLUMNS => ['cf:qualifier1:toInt',
+    'cf:qualifier2:c(org.apache.hadoop.hbase.util.Bytes).toInt'] } 
+
+Note that you can specify a FORMATTER by column only (cf:qualifier).  You cannot
+specify a FORMATTER for all columns of a column family.
+
+Scan can also be used directly from a table, by first getting a reference to a
+table, like such:
+
+  hbase> t = get_table 't'
+  hbase> t.scan
+
+Note in the above situation, you can still provide all the filtering, columns,
+options, etc as described above.
+
+--------------------------------------------------------------------------------------------------------
+
+
+filters:
+hbase(main):061:0> get 'emp','1',{COLUMN=> ['personal:city']}
+COLUMN                                      CELL                                                                                                                        
+ personal:city                              timestamp=1582191741772, value=hyderabad                                                                                    
+1 row(s) in 0.0200 seconds
+
+hbase(main):062:0> get 'emp','1',{COLUMN=> ['personal']}
+COLUMN                                      CELL                                                                                                                        
+ personal:city                              timestamp=1582191741772, value=hyderabad                                                                                    
+ personal:name                              timestamp=1582191696163, value=raju                                                                                         
+2 row(s) in 0.0220 seconds
+
+hbase(main):063:0> get 'emp','1',{COLUMN=> ['professional']}
+COLUMN                                      CELL                                                                                                                        
+ professional:designation                   timestamp=1582191771270, value=manager                                                                                      
+ professional:salary                        timestamp=1582191799063, value=50000                                                                                        
+2 row(s) in 0.0240 seconds
+
+
+
+hbase(main):069:0> delete 'emp','1','personal:name'
+0 row(s) in 0.0260 seconds
+
+
