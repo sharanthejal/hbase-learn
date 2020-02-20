@@ -1,5 +1,10 @@
 HBase Table Management commands
 --------------------------------------------
+Refernce:
+http://www.corejavaguru.com/bigdata/hbase-tutorial/shell-commands
+https://www.tutorialspoint.com/hbase/hbase_general_commands.htm
+
+
 hbase(main):007:0> create 'student', 'name', 'id'
 0 row(s) in 1.6290 seconds
 
