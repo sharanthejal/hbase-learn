@@ -1,0 +1,112 @@
+HBase Table Management commands
+--------------------------------------------
+hbase(main):007:0> create 'student', 'name', 'id'
+0 row(s) in 1.6290 seconds
+
+
+
+hbase(main):008:0> list
+TABLE                                                                                                                                                                   
+emp                                                                                                                                                                     
+student                                                                                                                                                                 
+2 row(s) in 0.0120 seconds
+
+=> ["emp", "student"]
+
+
+hbase(main):009:0> describe 'student'
+Table student is ENABLED                                                                                                                                                
+student                                                                                                                                                                 
+COLUMN FAMILIES DESCRIPTION                                                                                                                                             
+{NAME => 'id', DATA_BLOCK_ENCODING => 'NONE', BLOOMFILTER => 'ROW', REPLICATION_SCOPE => '0', VERSIONS => '1', COMPRESSION => 'NONE', MIN_VERSIONS => '0', TTL => 'FOREV
+ER', KEEP_DELETED_CELLS => 'FALSE', BLOCKSIZE => '65536', IN_MEMORY => 'false', BLOCKCACHE => 'true'}                                                                   
+{NAME => 'name', DATA_BLOCK_ENCODING => 'NONE', BLOOMFILTER => 'ROW', REPLICATION_SCOPE => '0', VERSIONS => '1', COMPRESSION => 'NONE', MIN_VERSIONS => '0', TTL => 'FOR
+EVER', KEEP_DELETED_CELLS => 'FALSE', BLOCKSIZE => '65536', IN_MEMORY => 'false', BLOCKCACHE => 'true'}                                                                 
+2 row(s) in 0.0490 seconds
+
+
+hbase(main):010:0> describe 'emp'
+Table emp is ENABLED                                                                                                                                                    
+emp                                                                                                                                                                     
+COLUMN FAMILIES DESCRIPTION                                                                                                                                             
+{NAME => 'personal', DATA_BLOCK_ENCODING => 'NONE', BLOOMFILTER => 'ROW', REPLICATION_SCOPE => '0', VERSIONS => '1', COMPRESSION => 'NONE', MIN_VERSIONS => '0', TTL => 
+'FOREVER', KEEP_DELETED_CELLS => 'FALSE', BLOCKSIZE => '65536', IN_MEMORY => 'false', BLOCKCACHE => 'true'}                                                             
+{NAME => 'professional', DATA_BLOCK_ENCODING => 'NONE', BLOOMFILTER => 'ROW', REPLICATION_SCOPE => '0', VERSIONS => '1', COMPRESSION => 'NONE', MIN_VERSIONS => '0', TTL
+ => 'FOREVER', KEEP_DELETED_CELLS => 'FALSE', BLOCKSIZE => '65536', IN_MEMORY => 'false', BLOCKCACHE => 'true'}                                                         
+2 row(s) in 0.0550 seconds
+
+
+
+hbase(main):001:0> show_filters
+ColumnPrefixFilter                                                                                                                                                      
+TimestampsFilter                                                                                                                                                        
+PageFilter                                                                                                                                                              
+MultipleColumnPrefixFilter                                                                                                                                              
+FamilyFilter                                                                                                                                                            
+ColumnPaginationFilter                                                                                                                                                  
+SingleColumnValueFilter                                                                                                                                                 
+RowFilter                                                                                                                                                               
+QualifierFilter                                                                                                                                                         
+ColumnRangeFilter                                                                                                                                                       
+ValueFilter                                                                                                                                                             
+PrefixFilter                                                                                                                                                            
+SingleColumnValueExcludeFilter                                                                                                                                          
+ColumnCountGetFilter                                                                                                                                                    
+InclusiveStopFilter                                                                                                                                                     
+DependentColumnFilter                                                                                                                                                   
+FirstKeyOnlyFilter                                                                                                                                                      
+KeyOnlyFilter 
+
+
+hbase(main):011:0> disable 'emp'
+0 row(s) in 2.4210 seconds
+
+hbase(main):017:0> disable_all 'e.*'
+emp                                                                                                                                                                     
+
+Disable the above 1 tables (y/n)?
+y
+1 tables successfully disabled
+
+hbase(main):018:0> enable_all 'e.*'
+emp                                                                                                                                                                     
+
+Enable the above 1 tables (y/n)?
+y
+1 tables successfully enabled
+
+
+hbase(main):019:0> drop 'student'
+
+ERROR: Table student is enabled. Disable it first.
+
+Drop the named table. Table must first be disabled:
+  hbase> drop 't1'
+  hbase> drop 'ns1:t1'
+  
+
+hbase(main):020:0> disable_all 's.*'
+student                                                                                                                                                                 
+
+Disable the above 1 tables (y/n)?
+y
+1 tables successfully disabled
+
+
+
+hbase(main):021:0> drop 'student'
+0 row(s) in 1.3300 seconds
+
+
+hbase(main):023:0> is_enabled 'emp'
+true                                                                                                                                                                    
+0 row(s) in 0.0480 seconds
+
+
+hbase(main):024:0> exists 'student'
+Table student does not exist                                                                                                                                            
+0 row(s) in 0.0260 seconds
+
+hbase(main):025:0> exists 'emp'
+Table emp does exist                                                                                                                                                    
+0 row(s) in 0.0270 seconds
