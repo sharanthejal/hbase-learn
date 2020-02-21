@@ -19,11 +19,9 @@ export HBASE_CLASSPATH="/usr/lib/hbase/bin/../conf:/usr/java/jdk1.7.0_67-clouder
 
 export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:$HBASE_CLASSPATH
 
-export HADOOP_CLASSPATH=$HBASE_CLASSPATH
-
-
 
 hadoop jar HbaseListTables.jar com.hbase.learn.ddl.create.HbaseCreateTable
 
-
 hadoop jar HbaseListTables.jar com.hbase.learn.ddl.create.HbaseListTables
+
+hadoop jar HbaseDisableTable.jar com.hbase.learn.ddl.create.DisableTable
