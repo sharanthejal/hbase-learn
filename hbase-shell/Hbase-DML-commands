@@ -259,6 +259,7 @@ COLUMN                                      CELL
 hbase(main):069:0> delete 'emp','1','personal:name'
 0 row(s) in 0.0260 seconds
 
+---------------------------------------------------------------------------------------
 hbase(main):073:0> scan 'emp', LIMIT=>2
 ROW                                         COLUMN+CELL                                                                                                                 
  1                                          column=professional:designation, timestamp=1582191771270, value=manager                                                     
@@ -268,3 +269,6 @@ ROW                                         COLUMN+CELL
  2                                          column=professional:designation, timestamp=1582192299292, value=engineer                                                    
  2                                          column=professional:salary, timestamp=1582192300981, value=60000                                                            
 2 row(s) in 0.0530 seconds
+
+
+put 'emp','1','salary','60000'
