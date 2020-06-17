@@ -1,0 +1,65 @@
+https://acadgild.com/blog/different-types-of-filters-in-hbase-shell
+https://hbase.apache.org/apidocs/org/apache/hadoop/hbase/filter/package-summary.html
+
+#LIMIT SCAN
+scan 'emp',{LIMIT => 3}
+
+#STARTROW
+scan 'emp',{LIMIT => 3, STARTROW => '100'}
+
+#COLUMNS
+scan 'emp',{COLUMNS => ['personal data:name']}
+
+#FirstKeyOnlyFilter
+	- This filter doesn’t take any arguments. A filter that will only return the first KV from each row.
+
+	scan 'emp',{FILTER => "FirstKeyOnlyFilter()"}
+
+#KeyOnlyFilter
+	- This filter doesn’t take any arguments. It returns solely the key part of every key-value.
+	- A filter that will only return the key component of each KV (the value will be rewritten as empty).
+
+	scan 'emp',{FILTER => "KeyOnlyFilter()"}	
+
+
+#prefixfilter:
+	- This filter takes one argument as a prefix of a row key. 
+	- It returns solely those key-values present in the very row that starts with the specified row prefix.
+	
+	scan 'emp',{FILTER => "PrefixFilter('1')"}
+
+#ColumnPrefixFilter
+	- This filter takes one argument as column prefix. 
+	- It returns solely those key-values present in the very column that starts with the specified column prefix. 
+	- The column prefix should be the form qualifier.
+
+	scan 'emp',{FILTER => "ColumnPrefixFilter('name')"}
+	scan 'emp',{FILTER => "ColumnPrefixFilter('name') AND PrefixFilter('300')"}
+
+#MultipleColumnPrefixFilter
+	- This filter takes a listing of column prefixes. 
+	- It returns key-values that are present in the very column that starts with any of the specified column prefixes. 
+	- Every column prefixes should be a form qualifier.	
+	
+	scan 'emp',{FILTER => "MultipleColumnPrefixFilter('name','address')"}
+
+#ColumnCountGetFilter
+	-Simple filter that returns first N columns on row only. It returns the primary limit number of columns within the table.
+	
+	scan 'emp',{FILTER => ColumnCountGetFilter(0)}
+	scan 'emp',{FILTER => ColumnCountGetFilter(1)}
+	scan 'emp',{FILTER => ColumnCountGetFilter(3)}
+	
+#PageFilter
+	- This filter takes one argument a page size. 
+	- It returns page size number of the rows from the table.	
+	
+	scan 'emp',{FILTER => PageFilter(1)}
+	
+#QualifierFilter (compar,Column Qualifier)
+	- This filter takes a compare operator and a comparator. 
+	- It compares every qualifier name with the comparator using the compare operator 
+	- and if the comparison returns true, it returns all the key-values in this column.
+	This filter is used to filter based on the column qualifier.
+	
+	scan 'emp',{FILTER => "QualifierFilter(=, 'binary:name')"}
