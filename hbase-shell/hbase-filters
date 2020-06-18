@@ -1,5 +1,13 @@
+
 https://acadgild.com/blog/different-types-of-filters-in-hbase-shell
 https://hbase.apache.org/apidocs/org/apache/hadoop/hbase/filter/package-summary.html
+https://acadgild.com/blog/different-types-of-filters-in-hbase-shell
+https://hbase.apache.org/apidocs/org/apache/hadoop/hbase/filter/package-summary.html
+https://sparkbyexamples.com/hbase/hbase-table-filtering-data-like-where-clause/
+https://www.guru99.com/hbase-shell-general-commands.html
+
+-Hive Integration
+https://acadgild.com/blog/hive-hbase-integration
 
 #LIMIT SCAN
 scan 'emp',{LIMIT => 3}
@@ -63,3 +71,56 @@ scan 'emp',{COLUMNS => ['personal data:name']}
 	This filter is used to filter based on the column qualifier.
 	
 	scan 'emp',{FILTER => "QualifierFilter(=, 'binary:name')"}
+	scan 'emp',{FILTER => "QualifierFilter(>, 'binary:name')"}
+	scan 'emp',{FILTER => "QualifierFilter(<, 'binary:name')"}
+	scan 'emp',{FILTER => "QualifierFilter(>=, 'binary:name')"}
+	scan 'emp',{FILTER => "QualifierFilter(!=, 'binary:name')"}
+
+
+#InclusiveStopFilter
+	- This filter takes one argument as row key on that to prevent scanning. 
+	- It returns all key-values present in rows together with the specified row.	
+	
+	scan 'emp',{FILTER => InclusiveStopFilter('300')}
+	
+#ValueFilter
+	- This filter takes a compare operator and a comparator. 
+	- It compares every value with the comparator using the compare operator
+	- and if the comparison returns true, it returns that key-value.	
+	
+	scan 'emp',{FILTER => "ValueFilter(=,'binaryprefix:m')"}
+	scan 'emp',{FILTER => "ValueFilter(!=,'binaryprefix:m')"}
+	scan 'emp',{FILTER => "ValueFilter(>=,'binaryprefix:m')"}
+
+#SingleColumnValueFilter
+	-This filter as an argument takes a column family, a qualifier, a compare operator and a comparator. 
+	- So, if the specified column isn’t found, all the columns of that row are going to be emitted. 
+	- And ,If the column is found and also the comparison with the comparator returns true, 
+	- all the columns of the row are going to be emitted. If the condition fails, the row won’t be emitted.
+	
+	scan 'emp',{FILTER => SingleColumnValueFilter('personal data','name',=,'binary:name',true, true)} 
+		
+
+#Count Command
+	COUNT 'emp', CACHE => 1000
+	COUNT 'emp', INTERVAL => 1000, CACHE=> 1000
+	COUNT 'emp', INTERVAL => 1, CACHE=> 1000
+		
+#Delete command
+	- delete 'table name','row name','column name'
+	- This will delete a particular cell.
+	
+	- deleteall 'table name','row name'
+	- This will delete all the values of a row 
+	
+	-truncate 'tablename'
+
+#Alternative way of filtering.	
+import org.apache.hadoop.hbase.filter.SingleColumnValueFilter
+import org.apache.hadoop.hbase.filter.CompareFilter
+import org.apache.hadoop.hbase.filter.BinaryComparator
+
+ scan 'emp', { FILTER => SingleColumnValueFilter.new(Bytes.toBytes('personal data'), 
+Bytes.toBytes('name'), CompareFilter::CompareOp.valueOf('EQUAL'),BinaryComparator.new(Bytes.toBytes('sharan')))}
+
+ 	
